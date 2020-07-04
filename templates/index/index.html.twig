@@ -1,20 +1,33 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello IndexController!{% endblock %}
-
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/tono/backend-test/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/tono/backend-test/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code></li>
-    </ul>
-</div>
+{# templates/index/index.html.twig #} {% extends 'base.html.twig' %} {% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 ml-md-auto">
+                <div class="card bg-light mb-3 mt-5" style="width: 800px">
+                    <div class="card-body">
+                        <div class="card-header mb-3">US Cities: Demographics</div>
+                        {% if app.user %}
+                            {{ form_start(form) }}
+                            <div class="form_group">
+                                <div class="col-md-12 mb-3">
+                                    {{ form_row(form.city, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-8 col-md-offset-4" style="margin-top:5px;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-btn fa-user"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                            {{ form_end(form) }}
+                        {% else %}
+                            <div>
+                                <p>Unauthorized. Please login first.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

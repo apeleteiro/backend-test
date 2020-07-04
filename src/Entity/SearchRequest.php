@@ -23,12 +23,7 @@ class SearchRequest
     private $city;
 
     /**
-     * @ORM\Column(type="bigint")
-     */
-    private $population;
-
-    /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $date;
 
@@ -51,18 +46,6 @@ class SearchRequest
     public function setCity(string $city): self
     {
         $this->city = $city;
-
-        return $this;
-    }
-
-    public function getPopulation(): ?string
-    {
-        return $this->population;
-    }
-
-    public function setPopulation(string $population): self
-    {
-        $this->population = $population;
 
         return $this;
     }
