@@ -32,11 +32,22 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $city = $form->get('city')->getData();
 
-            $this->searchRequestService->handleSearchRequest($city);
+            $demographics = $this->searchRequestService->handleSearchRequest($city);
+            dump($demographics);
+
+            $lastSearchRequests = $this->searchRequestService->getLastSearchRequests();
+
+            return $this->render('index/index.html.twig', [
+                'form' => $form->createView(),
+                'demographics' => $demographics,
+                'lastSearchRequests' => $lastSearchRequests,
+            ]);
         }
 
         return $this->render('index/index.html.twig', [
             'form' => $form->createView(),
+            'demographics' => [],
+            'lastSearchRequests' => [],
         ]);
     }
 }

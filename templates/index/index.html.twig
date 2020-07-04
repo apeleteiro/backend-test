@@ -20,6 +20,66 @@
                                 </div>
                             </div>
                             {{ form_end(form) }}
+                            {% if demographics|length > 0 %}
+                                <br><h3>Search results for {{ demographics.city }}</h3>
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Data</th>
+                                        <th scope="col">Values</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Median age</th>
+                                        <td>{{ demographics.median_age }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Total population</th>
+                                        <td>{{ demographics.total_population }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Male population</th>
+                                        <td>{{ demographics.male_population }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Female population</th>
+                                        <td>{{ demographics.female_population }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Foreign born</th>
+                                        <td>{{ demographics.foreign_born }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Average household</th>
+                                        <td>{{ demographics.average_household_size }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Races</th>
+                                        <td>{{ demographics.race }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            {% if lastSearchRequests|length > 0 %}
+                                <br><h3>Recent searches</h3>
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">City</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for searchRequest in lastSearchRequests %}
+                                        <tr>
+                                            <th scope="row">{{ searchRequest.city }}</th>
+                                            <td>{{ searchRequest.date|date('Y-m-d H:i:s') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
                         {% else %}
                             <div>
                                 <p>Unauthorized. Please login first.</p>
