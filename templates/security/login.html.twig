@@ -1,5 +1,5 @@
 {# templates/security/login.html.twig #} {% extends 'base.html.twig' %} {% block
-    title %}Log in!{% endblock %} {% block body %}
+    title %}backend-test{% endblock %} {% block body %}
     <div class="container">
         <div class="row">
             <div class="col-md-10 ml-md-auto">
@@ -61,6 +61,18 @@
                                     </div>
                                 </div>
                             </form>
+                            <a
+                                    href="{{ path('hwi_oauth_service_redirect', {'service': 'auth0'}) }}"
+                                    style="color: #fff;"
+                            >
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-danger">
+                                            <i class="fa fa-btn fa-sign-in"></i> Login with Auth0
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>

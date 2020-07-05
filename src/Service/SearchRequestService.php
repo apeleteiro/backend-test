@@ -18,15 +18,22 @@ class SearchRequestService
     const CACHE_KEY = 'cities_demographics_';
     const SECONDS_TO_EXPIRE_CACHE = 7200;
 
-    private $manager;
     private $security;
     private $searchRequestRepository;
+    private $manageUserService;
+    private $manageSearchRequestService;
 
-    public function __construct(EntityManagerInterface $manager, Security $security, SearchRequestRepository $searchRequestRepository)
+    public function __construct(
+        Security $security,
+        SearchRequestRepository $searchRequestRepository,
+        ManageUserService $manageUserService,
+        ManageSearchRequestService $manageSearchRequestService
+    )
     {
-        $this->manager = $manager;
         $this->security = $security;
         $this->searchRequestRepository = $searchRequestRepository;
+        $this->manageUserService = $manageUserService;
+        $this->manageSearchRequestService = $manageSearchRequestService;
     }
 
     public function handleSearchRequest($city)
@@ -58,13 +65,11 @@ class SearchRequestService
         if (count($response['records']) > 0) {
             /** @var User $user */
             $user = $this->security->getUser();
+            if (!$user instanceof User) {
+                $user = $this->manageUserService->manageUser($user);
+            }
 
-            $searchRequest = new SearchRequest();
-            $searchRequest->setCity($response['records'][0]['fields']['city']);
-            $searchRequest->setDate(new \DateTime());
-            $searchRequest->setUser($user);
-            $this->manager->persist($searchRequest);
-            $this->manager->flush();
+            $this->manageSearchRequestService->manageSearchRequest($response, $user);
 
             $content = $response['records'][0]['fields'];
             $content['cached_time'] = $response['cached_time'];
