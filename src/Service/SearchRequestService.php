@@ -6,6 +6,8 @@ use App\Entity\SearchRequest;
 use App\Entity\User;
 use App\Repository\SearchRequestRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Security\Core\Security;
 
@@ -13,6 +15,8 @@ class SearchRequestService
 {
     const API_ENTRY_POINT = 'https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-cities-demographics&q=&facet=city&facet=state&facet=race&refine.city=';
     const LAST_REQUESTS_NUMBER = 10;
+    const CACHE_KEY = 'cities_demographics_';
+    const SECONDS_TO_EXPIRE_CACHE = 7200;
 
     private $manager;
     private $security;
@@ -27,25 +31,45 @@ class SearchRequestService
 
     public function handleSearchRequest($city)
     {
-        $apiUrl = self::API_ENTRY_POINT . $city;
+        $cache = new FilesystemAdapter();
+        $cacheKey = self::CACHE_KEY . strtolower($city);
+        $response = [];
 
-        $httpClient = HttpClient::create();
-        $response = $httpClient->request('GET', $apiUrl);
+        /** @var CacheItem $item */
+        $item = $cache->getItem($cacheKey);
 
-        if (count($response->toArray()['records']) > 0) {
-            $content = $response->toArray();
+        if (!$item->isHit()) {
+            $apiUrl = self::API_ENTRY_POINT . $city;
 
+            $httpClient = HttpClient::create();
+            $response = $httpClient->request('GET', $apiUrl)->toArray();
+            $response['cached_time'] = (new \DateTime())->format('Y-m-d H:i:s');
+
+            $item->set($response);
+            $item->expiresAfter(self::SECONDS_TO_EXPIRE_CACHE);
+            $cache->save($item);
+        }
+
+        if ($cache->hasItem($cacheKey)) {
+            $item = $cache->getItem($cacheKey);
+            $response = $item->get();
+        }
+
+        if (count($response['records']) > 0) {
             /** @var User $user */
             $user = $this->security->getUser();
 
             $searchRequest = new SearchRequest();
-            $searchRequest->setCity($city);
+            $searchRequest->setCity($response['records'][0]['fields']['city']);
             $searchRequest->setDate(new \DateTime());
             $searchRequest->setUser($user);
             $this->manager->persist($searchRequest);
             $this->manager->flush();
 
-            return $content['records'][0]['fields'];
+            $content = $response['records'][0]['fields'];
+            $content['cached_time'] = $response['cached_time'];
+
+            return $content;
         }
 
         return [];
@@ -59,7 +83,7 @@ class SearchRequestService
     public function getApiStats()
     {
         $stats = [];
-        foreach($this->searchRequestRepository->findNumberOfSearchesForEachCity() as $result) {
+        foreach ($this->searchRequestRepository->findNumberOfSearchesForEachCity() as $result) {
             $stats[$result['city']] = $result[1];
         }
 

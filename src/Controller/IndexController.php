@@ -33,12 +33,16 @@ class IndexController extends AbstractController
             $city = $form->get('city')->getData();
 
             $demographics = $this->searchRequestService->handleSearchRequest($city);
+            $cachedTime = isset($demographics['cached_time'])
+                ? isset($demographics['cached_time'])
+                : (new \DateTime())->format('Y-m-d H:i:s');
 
             $lastSearchRequests = $this->searchRequestService->getLastSearchRequests();
 
             return $this->render('index/index.html.twig', [
                 'form' => $form->createView(),
                 'demographics' => $demographics,
+                'cachedTime' => $cachedTime,
                 'lastSearchRequests' => $lastSearchRequests,
             ]);
         }

@@ -60,6 +60,9 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                {% if cachedTime is defined %}
+                                    <h5>Last update: {{ cachedTime }}</h5><hr>
+                                {% endif %}
                             {% endif %}
                             {% if lastSearchRequests|length > 0 %}
                                 <br><h3>Recent searches</h3>
@@ -74,7 +77,7 @@
                                     {% for searchRequest in lastSearchRequests %}
                                         <tr>
                                             <th scope="row">{{ searchRequest.city }}</th>
-                                            <td>{{ searchRequest.date|date('Y-m-d H:i:s') }}</td>
+                                            <td>{{ searchRequest.date|date('Y-m-d') }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
