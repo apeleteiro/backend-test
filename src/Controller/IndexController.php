@@ -33,7 +33,6 @@ class IndexController extends AbstractController
             $city = $form->get('city')->getData();
 
             $demographics = $this->searchRequestService->handleSearchRequest($city);
-            dump($demographics);
 
             $lastSearchRequests = $this->searchRequestService->getLastSearchRequests();
 

@@ -55,4 +55,38 @@ class SearchRequestService
     {
         return $this->searchRequestRepository->findBy([], ['id' => 'DESC'], self::LAST_REQUESTS_NUMBER, 0);
     }
+
+    public function getApiStats()
+    {
+        $stats = [];
+        foreach($this->searchRequestRepository->findNumberOfSearchesForEachCity() as $result) {
+            $stats[$result['city']] = $result[1];
+        }
+
+        return $stats;
+    }
+
+    public function getApiUsers()
+    {
+        $users = [];
+        $results = $this->searchRequestRepository->findAll();
+
+        foreach ($results as $result) {
+            $users[$result->getDate()->format('Y-m-d')] = [];
+        }
+
+        foreach ($results as $result) {
+            if (array_key_exists($result->getCity(), $users[$result->getDate()->format('Y-m-d')])) {
+                ++$users[$result->getDate()->format('Y-m-d')][$result->getCity()];
+            } else {
+                $users[$result->getDate()->format('Y-m-d')][$result->getCity()] = 1;
+            }
+        }
+
+        foreach ($results as $result) {
+            arsort($users[$result->getDate()->format('Y-m-d')]);
+        }
+
+        return $users;
+    }
 }

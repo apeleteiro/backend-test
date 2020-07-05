@@ -19,6 +19,16 @@ class SearchRequestRepository extends ServiceEntityRepository
         parent::__construct($registry, SearchRequest::class);
     }
 
+    public function findNumberOfSearchesForEachCity()
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.city, count(s.city)')
+            ->groupBy('s.city')
+            ->orderBy('count(s.city)', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return SearchRequest[] Returns an array of SearchRequest objects
     //  */

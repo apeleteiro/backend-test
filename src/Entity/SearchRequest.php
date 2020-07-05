@@ -23,7 +23,7 @@ class SearchRequest
     private $city;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     private $date;
 
