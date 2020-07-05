@@ -39,7 +39,7 @@ class SearchRequestService
         $item = $cache->getItem($cacheKey);
 
         if (!$item->isHit()) {
-            $apiUrl = self::API_ENTRY_POINT . $city;
+            $apiUrl = self::API_ENTRY_POINT . ucwords($city);
 
             $httpClient = HttpClient::create();
             $response = $httpClient->request('GET', $apiUrl)->toArray();
