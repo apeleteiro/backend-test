@@ -34,7 +34,7 @@ class IndexController extends AbstractController
 
             $demographics = $this->searchRequestService->handleSearchRequest($city);
             $cachedTime = isset($demographics['cached_time'])
-                ? isset($demographics['cached_time'])
+                ? $demographics['cached_time']
                 : (new \DateTime())->format('Y-m-d H:i:s');
 
             $lastSearchRequests = $this->searchRequestService->getLastSearchRequests();
